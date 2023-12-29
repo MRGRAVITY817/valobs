@@ -2,6 +2,24 @@
 
 A collection of commonly used **VAL**ue **OB**ject**S** in enterprise applications
 
+## What are _value objects?_
+
+In Domain-Driven Design (DDD), a Value Object is one of the building blocks used to model the domain. Value Objects are objects whose equality is determined by the value of their attributes rather than by their identity. In other words, two Value Objects are considered equal if they have the same set of attribute values, even if they are distinct instances.
+
+Here are some key characteristics and considerations for Value Objects in DDD:
+
+- Immutability: Value Objects are typically immutable, meaning their state cannot be changed once they are created. This immutability ensures that the value of a Value Object remains constant throughout its lifetime.
+
+- Equality: Equality of Value Objects is based on the equality of their attributes. If two Value Objects have the same attribute values, they are considered equal, regardless of their individual identity.
+
+- Identity Ignored: Unlike entities, which have a distinct identity, Value Objects do not have a conceptual identity. They are defined only by their attributes. This means that if you create a new Value Object with the same attribute values as an existing one, they are considered equal.
+
+- Side-Effect-Free: Value Objects should not have any side effects. Operations on Value Objects should not change the state of the system or other objects.
+
+- Examples: Common examples of Value Objects include simple types such as strings, numbers, and dates, as well as more complex structures like Money, Address, or PhoneNumber. These objects are characterized by the fact that their identity is determined by their attribute values.
+
+Using Value Objects in your domain model helps to clarify the semantics of the model and can lead to more expressive and intention-revealing code. They are particularly useful for modeling concepts in your domain that are defined by their attributes rather than their identity.
+
 ## Collated List
 
 ### **Numeric Values**

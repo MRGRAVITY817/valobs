@@ -1,10 +1,12 @@
-use crate::{
-    result::ValobsResult,
-    traits::{Validate, ValueObject},
+use {
+    crate::{
+        result::ValobsResult,
+        traits::{Validate, ValueObject},
+    },
+    lazy_static::lazy_static,
+    regex::Regex,
+    serde::{Deserialize, Serialize},
 };
-use lazy_static::lazy_static;
-use regex::Regex;
-use serde::{Deserialize, Serialize};
 
 lazy_static! {
     static ref EMAIL_REGEX: Regex =
