@@ -18,7 +18,8 @@ keywords = [
   "ddd",
   "domain-driven-design",
   "value-object",
-  "enterprise-application",
+  "enterprise",
+  "application",
 ]
 
 [dependencies]
