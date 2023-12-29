@@ -4,8 +4,8 @@ use {
         traits::{Validate, ValueObject},
     },
     lazy_static::lazy_static,
+    nutype::nutype,
     regex::Regex,
-    serde::{Deserialize, Serialize},
 };
 
 lazy_static! {
@@ -13,18 +13,22 @@ lazy_static! {
         Regex::new("[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}").unwrap();
 }
 
-#[derive(PartialEq, Eq, Serialize, Deserialize)]
+#[nutype(
+    sanitize(trim, lowercase),
+    validate(
+        len_char_min = 5,
+        len_char_max = 20,
+        regex = EMAIL_REGEX,
+    ),
+    derive(Debug, PartialEq, Eq, AsRef, Serialize, Deserialize),
+)]
 pub struct Email(String);
 
 impl Validate for Email {
-    type Target = Email;
+    type Target = String;
 
-    fn validate(value: Self::Target) -> ValobsResult<Self::Target> {
-        if EMAIL_REGEX.is_match(&value.0) {
-            return Ok(value);
-        }
-
-        Err("Nope".into())
+    fn validate(value: impl Into<Self::Target>) -> ValobsResult<Self> {
+        Email::new(value).map_err(|e| e.to_string())
     }
 }
 

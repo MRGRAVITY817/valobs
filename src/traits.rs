@@ -4,7 +4,9 @@ use serde::{Deserialize, Serialize};
 pub trait Validate {
     type Target;
 
-    fn validate(value: Self::Target) -> ValobsResult<Self::Target>;
+    fn validate(value: impl Into<Self::Target>) -> ValobsResult<Self>
+    where
+        Self: Sized;
 }
 
 pub trait ValueObject<'de>: Validate + PartialEq + Eq + Serialize + Deserialize<'de> {}
