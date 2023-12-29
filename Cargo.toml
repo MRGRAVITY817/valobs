@@ -23,3 +23,4 @@ keywords = [
 ]
 
 [dependencies]
+rusty-money = "0.4.1"
