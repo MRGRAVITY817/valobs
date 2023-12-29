@@ -1,6 +1,6 @@
-# Valobs
+# VALOBS
 
-Valobs - A collection of commonly used value objects in enterprise applications
+A collection of commonly used **VAL**ue **OB**ject**S** in enterprise applications
 
 ## Collated List
 
