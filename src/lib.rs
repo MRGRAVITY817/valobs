@@ -1,10 +1,12 @@
 pub mod communication;
 pub mod financial;
+pub mod result;
 pub mod temporal;
+pub mod traits;
 
 pub mod prelude {
     pub use crate::{
-        communication::{Email, EmailError, PhoneNumber},
+        communication::{Email, PhoneNumber},
         financial::{iso, Money},
         temporal::{Date, DateTime, DateTimeTZ, Time},
     };

@@ -23,9 +23,11 @@ keywords = [
 ]
 
 [dependencies]
+serde = { version = "1.0", features = ["derive"] }
+validator = { version = "0.16", features = ["derive"] }
+nutype = { version = "0.4.0", features = ["regex"] }
 rusty-money = "0.4.1"
 chrono = "0.4.31"
 lazy_static = "1.4.0"
-nutype = { version = "0.4.0", features = ["regex"] }
 regex = "1.10.2"
 phonenumber = "0.3"
