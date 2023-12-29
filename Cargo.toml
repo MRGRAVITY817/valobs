@@ -2,7 +2,23 @@
 name = "valobs"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "Valobs - A collection of commonly used value objects in enterprise applications"
+license = "Apache-2.0"
+repository = "https://github.com/MRGRAVITY817/valobs"
+homepage = "https://github.com/MRGRAVITY817/valobs"
+documentation = "https://docs.rs/valobs/"
+readme = "README.md"
+categories = [
+  "development-tools",
+  "web-programming",
+  "data-structures",
+  "value-formatting",
+]
+keywords = [
+  "ddd",
+  "domain-driven-design",
+  "value-object",
+  "enterprise-application",
+]
 
 [dependencies]
