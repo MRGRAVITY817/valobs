@@ -1,6 +1,8 @@
-pub mod address;
-pub mod continent;
-pub mod country;
-pub mod geo_location;
-pub mod latitude;
-pub mod longitude;
+mod address;
+mod continent;
+mod country;
+mod geo_location;
+mod latitude;
+mod longitude;
+
+pub use latitude::Latitude;
