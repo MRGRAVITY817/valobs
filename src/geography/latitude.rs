@@ -67,4 +67,34 @@ mod tests {
         assert!(Latitude::new(f64::INFINITY).is_err());
         assert!(Latitude::new(f64::NEG_INFINITY).is_err());
     }
+
+    #[test]
+    fn test_equality() -> ValobsResult<()> {
+        // Arrange
+        let latitude1 = Latitude::new(60.0)?;
+        let latitude2 = Latitude::new(60.0)?;
+
+        // Act
+        let result = latitude1 == latitude2;
+
+        // Assert
+        assert_eq!(result, true);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_inequality() -> ValobsResult<()> {
+        // Arrange
+        let latitude1 = Latitude::new(60.0)?;
+        let latitude2 = Latitude::new(61.0)?;
+
+        // Act
+        let result = latitude1 == latitude2;
+
+        // Assert
+        assert_eq!(result, false);
+
+        Ok(())
+    }
 }
