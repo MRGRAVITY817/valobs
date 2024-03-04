@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
+
 /// Currency code, as defined by ISO 4217.
 /// Updated to the CLDR version 44.1.0.
 #[allow(dead_code)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
 pub enum Currency {
     ADP, // Andorran Peseta,
     AED, // United Arab Emirates Dirham,

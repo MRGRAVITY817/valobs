@@ -1,7 +1,7 @@
 use crate::result::ValobsResult;
 use serde::{Deserialize, Serialize};
 
-pub trait Validate {
+pub trait ValobsValidate {
     type Target;
 
     fn validate(value: impl Into<Self::Target>) -> ValobsResult<Self>
@@ -9,4 +9,4 @@ pub trait Validate {
         Self: Sized;
 }
 
-pub trait ValueObject<'de>: Validate + PartialEq + Eq + Serialize + Deserialize<'de> {}
+pub trait ValueObject<'de>: ValobsValidate + PartialEq + Eq + Serialize + Deserialize<'de> {}

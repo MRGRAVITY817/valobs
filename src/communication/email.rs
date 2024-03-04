@@ -1,7 +1,7 @@
 use {
     crate::{
         result::ValobsResult,
-        traits::{Validate, ValueObject},
+        traits::{ValobsValidate, ValueObject},
     },
     lazy_static::lazy_static,
     nutype::nutype,
@@ -24,7 +24,7 @@ lazy_static! {
 )]
 pub struct Email(String);
 
-impl Validate for Email {
+impl ValobsValidate for Email {
     type Target = String;
 
     fn validate(value: impl Into<Self::Target>) -> ValobsResult<Self> {
