@@ -7,6 +7,29 @@ use serde::{Deserialize, Serialize};
 /// ## Fields
 /// - `amount` - The amount of money.
 /// - `currency` - The currency of the money, represented as an ISO 4217 currency code.
+///
+/// ## When to use
+/// This is useful for simple use cases where you need to work with money.
+/// For more complex use cases, consider using a library like [rusty_money](https://crates.io/crates/rusty_money).
+///
+/// ## Example
+/// ```
+/// use valobs::financial::{Currency, Money};
+/// use valobs::result::ValobsResult;
+///
+/// fn main() -> ValobsResult<()> {
+///   let money = Money::new(100, Currency::USD)?;
+///   let other = Money::new(50, Currency::USD)?;
+///   
+///   // Add 100 USD to 50 USD
+///   let result = money.add(&other)?;
+///
+///   assert_eq!(result.amount(), 150);
+///   assert_eq!(result.currency(), &Currency::USD);
+///
+///   Ok(())
+/// }
+/// ```
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
 pub struct Money {
     amount: MoneyAmount,
