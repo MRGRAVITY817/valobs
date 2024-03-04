@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 ///    Ok(())
 /// }
 /// ```
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Copy)]
 pub struct Latitude(f64);
 
 impl Latitude {

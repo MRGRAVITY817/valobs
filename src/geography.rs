@@ -6,4 +6,4 @@ mod geo_location;
 mod latitude;
 mod longitude;
 
-pub use {altitude::Altitude, latitude::Latitude, longitude::Longitude};
+pub use {altitude::Altitude, geo_location::GeoLocation, latitude::Latitude, longitude::Longitude};
