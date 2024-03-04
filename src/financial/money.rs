@@ -1,8 +1,5 @@
 use super::currency::Currency;
-use crate::{
-    result::ValobsResult,
-    traits::{ValobsValidate, ValueObject},
-};
+use crate::{result::ValobsResult, traits::ValueObject};
 use serde::{Deserialize, Serialize};
 
 /// A value object representing money for simple use cases.
@@ -18,8 +15,11 @@ pub struct Money {
 
 impl Money {
     /// Create a new `Money` instance.
-    pub fn new(amount: MoneyAmount, currency: Currency) -> Self {
-        Money { amount, currency }
+    pub fn new(amount: MoneyAmount, currency: Currency) -> ValobsResult<Money> {
+        if amount == 0 {
+            return Err("Amount must be greater than 0".into());
+        }
+        Ok(Money { amount, currency })
     }
 
     /// Get the amount of money.
@@ -32,11 +32,16 @@ impl Money {
         &self.currency
     }
 
-    /// Add two `Money` instances together.
-    pub fn add(&self, other: &Money) -> ValobsResult<Money> {
+    pub fn check_currency(&self, other: &Money) -> ValobsResult<()> {
         if self.currency != other.currency {
             return Err("Currencies must be the same".into());
         }
+        Ok(())
+    }
+
+    /// Add two `Money` instances together.
+    pub fn add(&self, other: &Money) -> ValobsResult<Money> {
+        self.check_currency(other)?;
         Ok(Money {
             amount: self.amount + other.amount,
             currency: self.currency.clone(),
@@ -45,12 +50,10 @@ impl Money {
 
     /// Subtract one `Money` instance from another.
     pub fn subtract(&self, other: &Money) -> ValobsResult<Money> {
-        if self.currency != other.currency {
-            return Err("Currencies must be the same".into());
-        }
         if self.amount < other.amount {
             return Err("Amount must be greater than or equal to the other amount".into());
         }
+        self.check_currency(other)?;
         Ok(Money {
             amount: self.amount - other.amount,
             currency: self.currency.clone(),
@@ -77,18 +80,6 @@ impl Money {
     }
 }
 
-impl ValobsValidate for Money {
-    type Target = (MoneyAmount, Currency);
-
-    fn validate(value: impl Into<Self::Target>) -> ValobsResult<Self> {
-        let (amount, currency) = value.into();
-        if amount == 0 {
-            return Err("Amount must be greater than 0".into());
-        }
-        Ok(Money { amount, currency })
-    }
-}
-
 impl ValueObject<'_> for Money {}
 
 pub type MoneyAmount = u64;
@@ -107,7 +98,90 @@ mod test {
         let result = Money::new(amount, currency);
 
         // Assert
-        assert_eq!(result.amount(), amount);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn fails_to_create_money_when_amount_is_zero() {
+        // Arrange
+        let amount: MoneyAmount = 0;
+        let currency = Currency::USD;
+
+        // Act
+        let result = Money::new(amount, currency);
+
+        // Assert
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn add_money() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let other = Money::new(50, currency)?;
+
+        // Act
+        let result = money.add(&other).unwrap();
+
+        // Assert
+        assert_eq!(result.amount(), 150);
         assert_eq!(result.currency(), &currency);
+
+        Ok(())
+    }
+
+    #[test]
+    fn subtract_money() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let other = Money::new(50, currency)?;
+
+        // Act
+        let result = money.subtract(&other).unwrap();
+
+        // Assert
+        assert_eq!(result.amount(), 50);
+        assert_eq!(result.currency(), &currency);
+
+        Ok(())
+    }
+
+    #[test]
+    fn fails_to_subtract_money_when_given_amout_is_larger() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let other = Money::new(150, currency)?;
+
+        // Act
+        let result = money.subtract(&other);
+
+        // Assert
+        assert!(result.is_err());
+
+        Ok(())
+    }
+
+    #[test]
+    fn multiply_money() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let scalar = 2.0;
+
+        // Act
+        let result = money.multiply(scalar);
+
+        // Assert
+        assert_eq!(result.amount(), 200);
+        assert_eq!(result.currency(), &currency);
+
+        Ok(())
     }
 }

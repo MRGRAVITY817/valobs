@@ -1,12 +1,4 @@
-use {
-    crate::{
-        result::ValobsResult,
-        traits::{ValobsValidate, ValueObject},
-    },
-    lazy_static::lazy_static,
-    nutype::nutype,
-    regex::Regex,
-};
+use {crate::traits::ValueObject, lazy_static::lazy_static, nutype::nutype, regex::Regex};
 
 lazy_static! {
     static ref EMAIL_REGEX: Regex =
@@ -23,13 +15,5 @@ lazy_static! {
     derive(Debug, PartialEq, Eq, AsRef, Serialize, Deserialize),
 )]
 pub struct Email(String);
-
-impl ValobsValidate for Email {
-    type Target = String;
-
-    fn validate(value: impl Into<Self::Target>) -> ValobsResult<Self> {
-        Email::new(value).map_err(|e| e.to_string())
-    }
-}
 
 impl<'de> ValueObject<'de> for Email {}
