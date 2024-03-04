@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 /// ## Fields
 /// - `amount` - The amount of money.
 /// - `currency` - The currency of the money, represented as an ISO 4217 currency code.
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
 pub struct Money {
     amount: MoneyAmount,
     currency: Currency,
@@ -21,7 +21,6 @@ impl Money {
         }
         Ok(Money { amount, currency })
     }
-
     /// Get the amount of money.
     pub fn amount(&self) -> MoneyAmount {
         self.amount
@@ -77,6 +76,54 @@ impl Money {
             amount: (self.amount as f64 / scalar).round() as MoneyAmount,
             currency: self.currency.clone(),
         })
+    }
+
+    /// Allocate the `Money` instance between a number of parts.
+    ///
+    /// The result is an array of `Money` instances, where the sum of the parts equals the original amount.
+    /// The first parts will be larger than the last parts if there is a remainder.
+    ///
+    /// ## When to use
+    /// This is useful for **splitting a bill** between a number of people.
+    ///
+    /// ## Example
+    /// ```
+    /// use valobs::financial::{Currency, Money};
+    /// use valobs::result::ValobsResult;
+    ///
+    /// fn main() -> ValobsResult<()> {
+    ///    let money = Money::new(100, Currency::USD)?;
+    ///    let parts = 3;
+    ///
+    ///    // Split 100 USD between 3 people
+    ///    let result = money.allocate(parts)?;
+    ///
+    ///    assert_eq!(result.len(), 3);
+    ///    assert_eq!(result[0].amount(), 34);
+    ///    assert_eq!(result[1].amount(), 33);
+    ///    assert_eq!(result[2].amount(), 33);
+    ///    assert_eq!(result[0].currency(), &Currency::USD);
+    ///    assert_eq!(result[1].currency(), &Currency::USD);
+    ///    assert_eq!(result[2].currency(), &Currency::USD);
+    ///    Ok(())
+    /// }
+    /// ```
+    pub fn allocate(&self, parts: u32) -> ValobsResult<Vec<Money>> {
+        if parts == 0 {
+            return Err("Parts must be greater than 0".into());
+        }
+        let low_result = Self::new(self.amount / parts as MoneyAmount, self.currency)?;
+        let remainder = self.amount % parts as MoneyAmount;
+
+        (0..parts as MoneyAmount)
+            .map(|i| {
+                if i < remainder {
+                    Self::new(low_result.amount + 1, self.currency.clone())
+                } else {
+                    Ok(low_result)
+                }
+            })
+            .collect::<ValobsResult<Vec<Money>>>()
     }
 }
 
@@ -181,6 +228,81 @@ mod test {
         // Assert
         assert_eq!(result.amount(), 200);
         assert_eq!(result.currency(), &currency);
+
+        Ok(())
+    }
+
+    #[test]
+    fn divide_money() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let scalar = 2.0;
+
+        // Act
+        let result = money.divide(scalar)?;
+
+        // Assert
+        assert_eq!(result.amount(), 50);
+        assert_eq!(result.currency(), &currency);
+
+        Ok(())
+    }
+
+    #[test]
+    fn fails_to_divide_money_when_scalar_is_zero() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let scalar = 0.0;
+
+        // Act
+        let result = money.divide(scalar);
+
+        // Assert
+        assert!(result.is_err());
+
+        Ok(())
+    }
+
+    #[test]
+    fn allocate_money() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let parts = 3;
+
+        // Act
+        let result = money.allocate(parts)?;
+
+        // Assert
+        assert_eq!(result.len(), 3);
+        assert_eq!(result[0].amount(), 34);
+        assert_eq!(result[1].amount(), 33);
+        assert_eq!(result[2].amount(), 33);
+        assert_eq!(result[0].currency(), &currency);
+        assert_eq!(result[1].currency(), &currency);
+        assert_eq!(result[2].currency(), &currency);
+
+        Ok(())
+    }
+
+    #[test]
+    fn fails_to_allocate_money_when_parts_is_zero() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let parts = 0;
+
+        // Act
+        let result = money.allocate(parts);
+
+        // Assert
+        assert!(result.is_err());
 
         Ok(())
     }

@@ -1,4 +1,7 @@
 mod currency;
 mod money;
 
-pub use money::Money;
+pub use {
+    currency::Currency,
+    money::{Money, MoneyAmount},
+};
