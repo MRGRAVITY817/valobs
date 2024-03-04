@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 /// ## When to use
 ///
 /// Use this type when you want to represent a latitude.
-/// It can be used alone, or as part of a larger value object, such as a `GeoLocation`, with a [Longitude].
+/// It can be used alone, or as part of a larger value object, such as a `GeoLocation`, with a [Longitude](crate::geography::Longitude).
 ///
 /// ## Example
 /// ```
