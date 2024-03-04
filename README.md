@@ -56,9 +56,9 @@ The list of Value Objects in VALOBS is not exhaustive, and it is not intended to
 
 ### **Geographical Values**
 
-- [ ] Latitude
-- [ ] Longitude
-- [ ] GeoLocation
+- [x] Latitude
+- [x] Longitude
+- [x] GeoLocation
 - [ ] Address
 - [ ] Country
 - [ ] Continent
