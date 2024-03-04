@@ -54,13 +54,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new() {
-        // Test valid latitudes
+    fn create_latitude_with_valid_data() {
         assert!(Latitude::new(60.0).is_ok());
         assert!(Latitude::new(-90.0).is_ok());
         assert!(Latitude::new(90.0).is_ok());
+    }
 
-        // Test invalid latitudes
+    #[test]
+    fn fails_to_create_latitude_with_invalid_data() {
         assert!(Latitude::new(90.1).is_err());
         assert!(Latitude::new(-90.1).is_err());
         assert!(Latitude::new(f64::NAN).is_err());
@@ -69,7 +70,7 @@ mod tests {
     }
 
     #[test]
-    fn test_equality() -> ValobsResult<()> {
+    fn equality_between_two_latitude_values() -> ValobsResult<()> {
         // Arrange
         let latitude1 = Latitude::new(60.0)?;
         let latitude2 = Latitude::new(60.0)?;
@@ -84,7 +85,7 @@ mod tests {
     }
 
     #[test]
-    fn test_inequality() -> ValobsResult<()> {
+    fn inequality_between_two_latitude_values() -> ValobsResult<()> {
         // Arrange
         let latitude1 = Latitude::new(60.0)?;
         let latitude2 = Latitude::new(61.0)?;
@@ -94,6 +95,48 @@ mod tests {
 
         // Assert
         assert_eq!(result, false);
+
+        Ok(())
+    }
+
+    #[test]
+    fn inner_value_with_as_ref() -> ValobsResult<()> {
+        // Arrange
+        let latitude = Latitude::new(60.0)?;
+
+        // Act
+        let result = latitude.as_ref();
+
+        // Assert
+        assert_eq!(*result, 60.0);
+
+        Ok(())
+    }
+
+    #[test]
+    fn serialize_to_json() -> ValobsResult<()> {
+        // Arrange
+        let latitude = Latitude::new(60.0)?;
+
+        // Act
+        let result = serde_json::to_string(&latitude).unwrap();
+
+        // Assert
+        assert_eq!(result, "60.0");
+
+        Ok(())
+    }
+
+    #[test]
+    fn deserialize_from_json() -> ValobsResult<()> {
+        // Arrange
+        let latitude = "60.0";
+
+        // Act
+        let result: Latitude = serde_json::from_str(latitude).unwrap();
+
+        // Assert
+        assert_eq!(result, Latitude::new(60.0)?);
 
         Ok(())
     }

@@ -685,6 +685,7 @@ dependencies = [
  "regex",
  "rusty-money",
  "serde",
+ "serde_json",
  "validator",
 ]
 
