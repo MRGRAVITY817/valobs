@@ -11,23 +11,23 @@ use serde::{Deserialize, Serialize};
 /// ## When to use
 ///
 /// Use this type when you want to represent a latitude.
-/// It can be used alone, or as part of a larger value object, such as a `GeoLocation`, with a `Longitude`.
+/// It can be used alone, or as part of a larger value object, such as a `GeoLocation`, with a [`Longitude`].
+///
+/// ## Example
+/// ```
+/// use valobs::geography::Latitude;
+/// use valobs::result::ValobsResult;
+///
+/// fn main() -> ValobsResult<()> {
+///    let latitude = Latitude::new(60.0)?;
+///    Ok(())
+/// }
+/// ```
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Latitude(f64);
 
 impl Latitude {
     /// Create a new `Latitude` instance.
-    ///
-    /// # Example
-    /// ```
-    /// use valobs::geography::Latitude;
-    /// use valobs::result::ValobsResult;
-    ///
-    /// fn main() -> ValobsResult<()> {
-    ///    let latitude = Latitude::new(60.0)?;
-    ///    Ok(())
-    /// }
-    /// ```
     pub fn new(latitude: f64) -> ValobsResult<Self> {
         if latitude < -90.0 || latitude > 90.0 {
             return Err("Latitude must be between -90 and 90".into());

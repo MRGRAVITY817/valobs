@@ -1,6 +1,6 @@
 [package]
 name = "valobs"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 description = "Valobs - A collection of commonly used value objects in enterprise applications"
 license = "Apache-2.0"
