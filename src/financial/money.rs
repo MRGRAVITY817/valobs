@@ -148,6 +148,51 @@ impl Money {
             })
             .collect::<ValobsResult<Vec<Money>>>()
     }
+
+    /// Allocate the `Money` instance by a set of ratios.
+    /// It works the same way as `allocate`, but instead of splitting the money evenly, you can split it by a set of ratios.
+    /// The ratios must be positive and finite, and the sum of the ratios must be greater than 0.
+    ///
+    /// Just like `allocate`, if there is a remainder, the first parts will be larger than the last parts.
+    ///
+    /// ## When to use
+    /// This is useful for **splitting a bill** between a number of people, where some people should pay more than others.
+    /// For example, if you have a bill of 100 USD, and you want to split it by the ratios 1:2:3, you would get 17 USD, 33 USD, and 50 USD.
+    ///
+    /// ## Example
+    /// ```
+    /// use valobs::financial::{Currency, Money};
+    /// use valobs::result::ValobsResult;
+    ///
+    /// fn main() -> ValobsResult<()> {
+    ///   let money = Money::new(100, Currency::USD)?;
+    ///   let ratios = vec![1.0, 2.0, 3.0];
+    ///
+    ///   // Split 100 USD by the ratios 1:2:3
+    ///   let result = money.allocate_by_ratio(ratios)?;
+    ///
+    ///   assert_eq!(result.len(), 3);
+    ///   assert_eq!(result[0].amount(), 17);
+    ///   assert_eq!(result[1].amount(), 33);
+    ///   assert_eq!(result[2].amount(), 50);
+    ///   assert_eq!(result[0].currency(), &Currency::USD);
+    ///   assert_eq!(result[1].currency(), &Currency::USD);
+    ///   assert_eq!(result[2].currency(), &Currency::USD);
+    ///
+    ///   Ok(())
+    /// }
+    /// ```
+    pub fn allocate_by_ratio(&self, ratios: Vec<f64>) -> ValobsResult<Vec<Money>> {
+        let total: f64 = ratios.iter().sum();
+
+        ratios
+            .iter()
+            .map(|ratio| {
+                let amount = (self.amount as f64 * ratio / total).round() as MoneyAmount;
+                Money::new(amount, self.currency.clone())
+            })
+            .collect::<ValobsResult<Vec<Money>>>()
+    }
 }
 
 impl ValueObject<'_> for Money {}
@@ -326,6 +371,114 @@ mod test {
 
         // Assert
         assert!(result.is_err());
+
+        Ok(())
+    }
+
+    #[test]
+    fn allocate_money_by_ratio() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let ratios = vec![1.0, 2.0, 3.0];
+
+        // Act
+        let result = money.allocate_by_ratio(ratios)?;
+
+        // Assert
+        assert_eq!(result.len(), 3);
+        assert_eq!(result[0].amount(), 17);
+        assert_eq!(result[1].amount(), 33);
+        assert_eq!(result[2].amount(), 50);
+        assert_eq!(result[0].currency(), &currency);
+        assert_eq!(result[1].currency(), &currency);
+        assert_eq!(result[2].currency(), &currency);
+
+        Ok(())
+    }
+
+    #[test]
+    fn fails_to_allocate_money_by_ratio_when_ratio_is_zero() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let ratios = vec![1.0, 0.0, 3.0];
+
+        // Act
+        let result = money.allocate_by_ratio(ratios);
+
+        // Assert
+        assert!(result.is_err());
+
+        Ok(())
+    }
+
+    #[test]
+    fn fails_to_allocate_money_by_ratio_when_ratio_is_negative() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let ratios = vec![1.0, -2.0, 3.0];
+
+        // Act
+        let result = money.allocate_by_ratio(ratios);
+
+        // Assert
+        assert!(result.is_err());
+
+        Ok(())
+    }
+
+    #[test]
+    fn fails_to_allocate_money_by_ratio_when_ratio_is_infinite() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let ratios = vec![1.0, f64::INFINITY, 3.0];
+
+        // Act
+        let result = money.allocate_by_ratio(ratios);
+
+        // Assert
+        assert!(result.is_err());
+
+        Ok(())
+    }
+
+    #[test]
+    fn fails_to_allocate_money_by_ratio_when_ratio_is_nan() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let ratios = vec![1.0, f64::NAN, 3.0];
+
+        // Act
+        let result = money.allocate_by_ratio(ratios);
+
+        // Assert
+        assert!(result.is_err());
+
+        Ok(())
+    }
+
+    #[test]
+    fn allocate_money_by_ratio_without_ratios() -> ValobsResult<()> {
+        // Arrange
+        let amount: MoneyAmount = 100;
+        let currency = Currency::USD;
+        let money = Money::new(amount, currency)?;
+        let ratios = vec![];
+
+        // Act
+        let result = money.allocate_by_ratio(ratios)?;
+
+        // Assert
+        assert_eq!(result.len(), 0);
 
         Ok(())
     }

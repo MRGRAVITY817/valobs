@@ -1,5 +1,6 @@
 pub mod communication;
 pub mod financial;
+pub mod geography;
 pub mod result;
 pub mod temporal;
 pub mod traits;
