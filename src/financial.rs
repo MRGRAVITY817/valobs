@@ -1,3 +1,4 @@
+mod currency;
 mod money;
 
-pub use money::{iso, Money};
+pub use money::Money;

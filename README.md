@@ -20,6 +20,19 @@ Here are some key characteristics and considerations for Value Objects in DDD:
 
 Using Value Objects in your domain model helps to clarify the semantics of the model and can lead to more expressive and intention-revealing code. They are particularly useful for modeling concepts in your domain that are defined by their attributes rather than their identity.
 
+## Why VALOBS?
+
+In enterprise applications, there are many common concepts that are represented as Value Objects. These concepts often have well-defined attributes and behaviors, and are used across different domains and applications. Examples include dates, times, money, addresses, and phone numbers.
+
+VALOBS is a collection of commonly used Value Objects that can be used as building blocks in your domain model. By using these pre-defined Value Objects, you can avoid reinventing the wheel and ensure consistency and correctness in your domain model. You can also take advantage of the best practices and patterns that are built into these Value Objects.
+
+### Will it cover all possible Value Objects?
+
+No, it won't.   
+
+The list of Value Objects in VALOBS is not exhaustive, and it is not intended to cover every possible Value Object that you might encounter in your domain. Instead, it focuses on the most common and widely used Value Objects that are applicable to a wide range of domains and applications.
+
+
 ## Collated List
 
 ### **Numeric Values**
