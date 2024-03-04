@@ -60,8 +60,8 @@ The list of Value Objects in VALOBS is not exhaustive, and it is not intended to
 - [x] Longitude
 - [x] GeoLocation
 - [ ] Address
-- [ ] Country
-- [ ] Continent
+- [x] Country
+- [x] Continent
 
 ### **Communication**
 
